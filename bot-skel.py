@@ -12,7 +12,7 @@ import code         # code.interact
 import os           # environment variables
 import inspect      # call stack inspection
 import random       # dumb random number generator
-import youtube_dl  # we be getting stuff from youtube
+import youtube_dl   # we be getting stuff from youtube
 
 from discord.ext import commands    # Bot class and utils
 
@@ -63,9 +63,6 @@ def log_msg(msg: str, level: str):
 
 # bot instantiation
 bot = commands.Bot(command_prefix='!')
-
-#queue initialization
-queue = {}
 
 # on_ready - called after connection to server is established
 @bot.event
@@ -165,65 +162,16 @@ async def play(ctx, song : str):
 			if ctx.voice_client.is_playing():
 				await ctx.send('i am already playing something, somewhere else')
 				raise Exception('bot is already playing a song somewhere else')
-
 			await ctx.invoke(bot.get_command('cmere'))
 			ctx.voice_client.play(discord.FFmpegPCMAudio("./music/%s.mp3" %song))
 		else:
 			if ctx.voice_client.is_playing():
 				await ctx.send('i am already playing something, wait until i am done')
 				raise Exception('bot is already playing a song')
-
 			ctx.voice_client.play(discord.FFmpegPCMAudio("./music/%s.mp3" %song))
 	else:
 		await ctx.send('i do not have that song locally')
-
-		ydl_opts = {'format': 'bestaudio/best',
-					'postprocessors': [{'key': 'FFmpegExtractAudio',
-									   'preferredcodec': 'mp3',
-									   'preferredquality': '192'}]
-				}
-
-		if ctx.voice_client is None:
-			with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-				ydl._ies = [ydl.get_info_extractor('Youtube')]
-				ydl.download([song])
-			for file in os.listdir("./"):
-				if file.endswith(".mp3"):
-					os.rename(file, "temp.mp3")
-
-			await ctx.invoke(bot.get_command('join'))
-			ctx.voice_client.play(discord.FFmpegPCMAudio("./temp.mp3"))
-		elif ctx.voice_client.channel is not ctx.author.voice.channel:
-			if ctx.voice_client.is_playing():
-				await ctx.send('i am already playing something, somewhere else')
-				raise Exception('bot is already playing a song somewhere else')
-
-			if os.path.isfile('temp.mp3'):
-				os.remove('temp.mp3')
-
-			with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-				ydl.download([song])
-			for file in os.listdir("./"):
-				if file.endswith(".mp3"):
-					os.rename(file, "temp.mp3")
-
-			await ctx.invoke(bot.get_command('cmere'))
-			ctx.voice_client.play(discord.FFmpegPCMAudio("./temp.mp3"))
-		else:
-			if ctx.voice_client.is_playing():
-				await ctx.send('i am already playing something, wait until i am done')
-				raise Exception('bot is already playing a song')
-
-			if os.path.isfile('temp.mp3'):
-				os.remove('temp.mp3')
-
-			with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-				ydl.download([song])
-			for file in os.listdir("./"):
-				if file.endswith(".mp3"):
-					os.rename(file, "temp.mp3")
-
-			ctx.voice_client.play(discord.FFmpegPCMAudio("./temp.mp3"))
+		raise Exception('this song does not exist in folder')
 
 @bot.command(brief='List all songs in ./music/ ')
 async def list(ctx):
@@ -278,7 +226,7 @@ async def resume(ctx):
 @bot.command(brief='Bot stops playing')
 async def stop(ctx):
 	if ctx.author.voice is None:
-		await ctx.send('you are not here to make me stop, bastard')
+		await ctx.send('you are not here to make me work, bastard')
 		raise Exception('author not connected')
 
 	if ctx.voice_client is None:
@@ -315,5 +263,3 @@ if __name__ == '__main__':
 
 	# launch bot (blocking operation)
 	bot.run(os.environ['BOT_TOKEN'])
-	if input() == 'quit':
-		bot.close()
