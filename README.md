@@ -30,7 +30,7 @@ contain the following variables:
 `make install-reqs`
 3. Run the bot:
    1. **Locally**: `make run`
-   2. **In a container**: `make docker-run`
+   2. **In a container**: `make docker-up`
 
 ## Usage:
 
@@ -40,7 +40,7 @@ where the bot is present. The bot's prefix is `!`.
 ## Plans for the future:
 
 * Add queueing system for songs
-* Refactor the code to make it more readable
+* Refactor the code to make it more readable (it's a mess right now, I know)
 * Deploy the bot to a Kubernetes cluster
 * Finish the secrets feature, so that the bot can tell secrets to users and 
 remember secrets told by users (gimmick feature)

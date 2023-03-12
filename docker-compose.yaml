@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+    server:
+        build:
+            context: .
+            dockerfile: ./config/Dockerfile
+        image: "bot-image"
+        container_name: "bot-container"
+        volumes:
+            -   type: bind
+                source: ./music
+                target: /music
+        environment:
+            - BOT_TOKEN="${BOT_TOKEN}"
+        network_mode: host

@@ -341,5 +341,7 @@ if __name__ == '__main__':
         log_msg('save your token in the BOT_TOKEN env variable!', 'error')
         exit(-1)
 
+    token = os.environ['BOT_TOKEN'].removeprefix('"').removesuffix('"')
+
     # launch bot (blocking operation)
-    bot.run(os.environ['BOT_TOKEN'])
+    bot.run(token)
